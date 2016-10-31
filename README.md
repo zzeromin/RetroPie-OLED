@@ -1,2 +1,2 @@
-# Retropie-OLED
-Retropie-OLED
+# RetroPie-OLED
+RetroPie-OLED
