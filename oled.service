@@ -2,12 +2,12 @@
 # path and command: sudo nano /lib/systemd/system/oled.service
 
 [Unit]
-Description=RetroPie OLED Service
+Description=Retropie OLED Service
 After=multi-user.target
 
 [Service]
 Type=idle
-ExecStart=/usr/bin/python /home/pi/RetroPie-OLED/test.py
+ExecStart=/usr/bin/python /home/pi/Retropie-OLED/test.py
 
 [Install]
 WantedBy=multi-user.target

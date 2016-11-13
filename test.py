@@ -3,7 +3,7 @@
 # https://github.com/adafruit/Adafruit_Python_SSD1306.git
 # https://github.com/haven-jeon/piAu_volumio
 #
-# installed python package: python-pip python-imaging python-dev python-smbus i2c-tools
+# installed python package: build-essential python-dev python-pip RPi.GPIO i2c-tools python-imaging python-smbus
 # This code edited for rpi3 Retropie v4.0.2 by zzeromin
 # 1. 
 # 2. 
@@ -109,7 +109,7 @@ def main():
 		except IOError:
 			draw.rectangle((0,0,width,height), outline=0, fill=0)
 			draw.text((0, top), "Welcome", font=font_system, fill=255)
-			draw.text((0, top+30), "Retropie v4.0.2", font=font_system, fill=255)
+			draw.text((0, top+30), "Retropie v4.1", font=font_system, fill=255)
 			sleep(3)
 			break
 			pass
@@ -195,4 +195,3 @@ if __name__ == "__main__":
     # Catch the remaining exit errors
     except:
         sys.exit(0)
-
