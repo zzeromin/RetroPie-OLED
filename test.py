@@ -3,7 +3,7 @@
 # https://github.com/adafruit/Adafruit_Python_SSD1306.git
 # https://github.com/haven-jeon/piAu_volumio
 #
-# installed python package: build-essential python-dev python-pip RPi.GPIO i2c-tools python-imaging python-smbus
+# installed python package: python-pip python-imaging python-dev python-smbus i2c-tools
 # This code edited for rpi3 Retropie v4.0.2 by zzeromin
 # 1. 
 # 2. 
@@ -88,8 +88,8 @@ def main():
     x = padding
 
     # Load default font.
-    font_system = ImageFont.truetype('/home/pi/code/oled/NanumGothic_Coding_Bold.ttf', 15)
-    font_rom = ImageFont.truetype('/home/pi/code/oled/NanumGothic_Coding_Bold.ttf', 15)
+    font_system = ImageFont.truetype('/home/pi/RetroPie-OLED/NanumGothic_Coding_Bold.ttf', 15)
+    font_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/NanumGothic_Coding_Bold.ttf', 15)
 
     #get ip address of eth0 connection
     cmdeth = "ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
