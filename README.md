@@ -1,5 +1,5 @@
 # RetroPie-OLED
-Show Game Title for RetroPie v4.0.2+ using 128x64 OLED I2C Display
+Show Game Title on 128x64 OLED I2C Display for RetroPie v4.0.2+
 
 <img src="https://github.com/zzeromin/RetroPie-OLED/blob/master/RetroPie-OLED01.jpg" width="70%" height="70%">
 
@@ -8,7 +8,7 @@ Small script written in Python for RetroPie project (https://retropie.org.uk/)
 running on Raspberry Pi 2,3, which displays all necessary info on a 128x64 OLED I2C display
 
 ##Features
-* Current Ddate and Time, IP address of eth0, wlan0
+* Current Date and Time, IP address of eth0, wlan0
 * CPU Temperature and Speed
 * Emulation and ROM information
 
