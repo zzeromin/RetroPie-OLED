@@ -11,6 +11,7 @@ running on Raspberry Pi 2,3, which displays all necessary info on a 128x64 OLED 
 * Current Date and Time, IP address of eth0, wlan0
 * CPU Temperature and Speed
 * Emulation and ROM information
+* Double-byte character set support (Korean/Chinese/Japanese)
 
 ##Development Environment
 * Raspberry Pi 2, 3
