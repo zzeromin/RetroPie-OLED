@@ -39,7 +39,7 @@ else
 GAMELIST=${GAMELIST2}
 fi
 
-title=`grep -A1 "${rom_bn}" ${GAMELIST} | awk '{getline;print}' | awk 'BEGIN {FS="<name>"} {print $2}' | awk 'BEGIN {FS="</name>"} {print $1}'`
+title=`grep -s -A1 "${rom_bn}" ${GAMELIST} | awk '{getline;print}' | awk 'BEGIN {FS="<name>"} {print $2}' | awk 'BEGIN {FS="</name>"} {print $1}'`
 
 echo "$system" >&2
 echo "$title" >&2

@@ -100,11 +100,10 @@ def main():
     # Draw some shapes.
     # First define some constants to allow easy resizing of shapes.
 
-    padding = 4
+    padding = 2
     shape_width = 20
     top = padding
     bottom = height-padding
-    x = padding
 
 	
     # Load default font.
@@ -145,7 +144,7 @@ def main():
             draw.text(((width-t1_size[0])/2, top), unicode(msg1), font=font_system, fill=255)
             draw.text(((width-98)/2, top+18), unicode(msg2), font=font_rom, fill=255)
             draw.text(((width-t3_size[0])/2, top+36), msg3, font=fonte_rom, fill=255)
-            draw.text(((width-t4_size[0])/2, top+45), msg4, font=fonte_rom, fill=255)
+            draw.text(((width-t4_size[0])/2, top+48), msg4, font=fonte_rom, fill=255)
             disp.image(image)
             disp.display()
             #break
@@ -171,7 +170,7 @@ def main():
             }
             systemicon = systemMap.get(system, "none")
             if systemicon != "none" :
-                icon = Image.open(system + ".png")
+                icon = Image.open("/home/pi/RetroPie-OLED/" + system + ".png")
                 system = systemicon
             rom = f.readline()
             rom = rom.replace("\n","")
@@ -194,18 +193,21 @@ def main():
                     image.paste(icon,(0,0))
                 else :
                     draw.text( (0, top), unicode(system), font=font_system, fill=255 )
-                draw.text( (0, top+18), game[0:14], font=font_rom, fill=255 )
-                draw.text( (0, top+33), game[14:28], font=font_rom, fill=255 )
-                draw.text( (0, top+48), game[28:42], font=font_rom, fill=255 )
+                draw.text( (0, top+20), game[0:14], font=font_rom, fill=255 )
+                draw.text( (0, top+35), game[14:28], font=font_rom, fill=255 )
+                draw.text( (0, top+50), game[28:42], font=font_rom, fill=255 )
                 disp.image(image)
                 disp.display()
 
             else:
                 draw.rectangle((0,0,width,height), outline=0, fill=0 )
-                draw.text( (0, top), unicode(system), font=font_system, fill=255 )
-                draw.text( (0, top+18), game[0:14], font=font_rom, fill=255 )
-                draw.text((0, top+28), "CPU Temp: " + str( new_Temp ), font=fonte_rom, fill=255)
-                draw.text((0, top+46), "CPU Speed: " + str( new_Speed ), font=fonte_rom, fill=255)
+                if systemicon != "none" :
+                    image.paste(icon,(0,0))
+                else :
+                    draw.text( (0, top), unicode(system), font=font_system, fill=255 )
+                draw.text( (0, top+20), game[0:14], font=font_rom, fill=255 )
+                draw.text((0, top+36), "CPU Temp : " + str( new_Temp ), font=fonte_rom, fill=255)
+                draw.text((0, top+52), "CPU Speed: " + str( new_Speed ), font=fonte_rom, fill=255)
                 disp.image(image)
                 disp.display()
 
@@ -217,10 +219,10 @@ def main():
             sleep(wait)
 
             draw.rectangle((0,0,width,height), outline=0, fill=0)
-            draw.text((0, top), datetime.now().strftime( "%b %d %H:%M:%S" ), font=fonte_rom, fill=255)
-            draw.text((0, top+15), "IP " + ipaddr, font=fonte_rom, fill=255)
-            draw.text((0, top+30), "CPU Temp: " + str( new_Temp ), font=fonte_rom, fill=255)
-            draw.text((0, top+45), "CPU Speed: " + str( new_Speed ), font=fonte_rom, fill=255)
+            draw.text((0, top+4), datetime.now().strftime( "%b %d %H:%M:%S" ), font=fonte_rom, fill=255)
+            draw.text((0, top+20), "IP " + ipaddr, font=fonte_rom, fill=255)
+            draw.text((0, top+36), "CPU Temp : " + str( new_Temp ), font=fonte_rom, fill=255)
+            draw.text((0, top+52), "CPU Speed: " + str( new_Speed ), font=fonte_rom, fill=255)
             disp.image(image)
             disp.display()
             sleep(3)
