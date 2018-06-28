@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 Title        : RetroPie_OLED.py
-Author       : zzeromin, member of Raspberrypi Village
+Author   : zzeromin, member of Raspberrypi Village
 Creation Date: Nov 13, 2016
-Blog         : http://rasplay.org, http://forums.rasplay.org/, https://zzeromin.tumblr.com/
+Blog        : http://rasplay.org, http://forums.rasplay.org/, https://zzeromin.tumblr.com/
 Thanks to    : smyani, zerocool, GreatKStar
 Free and open for all to use. But put credit where credit is due.
 
@@ -49,7 +49,7 @@ SPI_DEVICE = 0
 disp = Adafruit_SSD1306.SSD1306_128_64(rst=RST)
 
 def run_cmd(cmd):
-    # runs whatever is in the cmd variable in the terminal
+# runs whatever is in the cmd variable in the terminal
     p = Popen(cmd, shell=True, stdout=PIPE)
     output = p.communicate()[0]
     return output
@@ -99,16 +99,19 @@ def main():
 
     # Draw some shapes.
     # First define some constants to allow easy resizing of shapes.
-    padding = 2
+
+    padding = 4
     shape_width = 20
     top = padding
     bottom = height-padding
     x = padding
 
+	
     # Load default font.
-    font_system = ImageFont.truetype('/home/pi/RetroPie-OLED/NanumGothic_Coding_Bold.ttf', 15)
-    font_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/NanumGothic_Coding_Bold.ttf', 15)
-
+    font_system = ImageFont.truetype('/home/pi/RetroPie-OLED/neodgm.ttf', 16)
+    font_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/d2.ttf', 11)
+    fonte_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/ProggySmall.ttf', 15)
+	
     #get ip address of eth0 connection
     cmdeth = "ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
     #get ip address of wlan0 connection
@@ -117,75 +120,110 @@ def main():
 
     #get ip address of eth0 connection    
     ipaddr = get_ip_address(cmd, cmdeth)
+    ipaddr = ipaddr.replace("\n","")
 
     old_Temp = new_Temp = get_cpu_temp()
     old_Speed = new_Speed = get_cpu_speed()
 
     while True:
-#		draw.rectangle((0,0,width,height), outline=0, fill=0)
+        try:
+            f = open('/dev/shm/runcommand.log', 'r')
+            # except FileNotFoundError:
+        except IOError:
+            ipaddr = get_ip_address(cmd, cmdeth)
+            ipaddr = ipaddr.replace("\n","") 
+            msg1 = "라즈미니파이"
+            msg2 = "라즈겜동 텐타클 팀"
+            msg3 = datetime.now().strftime( "%b %d %H:%M:%S" )
+            msg4 = unicode( "IP " + ipaddr )
+            t1_size = draw.textsize(msg1, font=font_system)
+            t2_size = draw.textsize(msg2, font=font_rom)
+            t3_size = draw.textsize(msg3, font=fonte_rom)
+            t4_size = draw.textsize(msg4, font=fonte_rom)
 
-		try:
-			f = open('/dev/shm/runcommand.log', 'r')
-#                except FileNotFoundError:
-		except IOError:
-                	msg1 = "Welcome"
-                	msg2 = "RetroPie v4.1"
-                	ipaddr = get_ip_address(cmd, cmdeth)
+            draw.rectangle((0,0,width,height), outline=0, fill=0)
+            draw.text(((width-t1_size[0])/2, top), unicode(msg1), font=font_system, fill=255)
+            draw.text(((width-98)/2, top+18), unicode(msg2), font=font_rom, fill=255)
+            draw.text(((width-t3_size[0])/2, top+36), msg3, font=fonte_rom, fill=255)
+            draw.text(((width-t4_size[0])/2, top+45), msg4, font=fonte_rom, fill=255)
+            disp.image(image)
+            disp.display()
+            #break
+            pass
+        else:
+            system = f.readline()
+            system = system.replace("\n","")
+            systemMap = {
+                "Berrycade":"Berrycade",
+                "fba":"FinalBurn Alpha",
+                "gba":"GameBoy Advance",
+                "kodi":"KODI",
+                "mame-mame4all":"MAME4ALL",
+                "mame-advmame":"AdvanceMAME",
+                "mame-libretro":"lr-MAME",
+                "msx":"MSX",
+                "nes":"Famicom",   # Nintendo Entertainment System
+                "psp":"PSPortable",    # PlayStation Portable
+                "psx":"Playstation",
+                "ports":"Ports",
+                "snes":"Super Famicom", # Super Nintendo Entertainment System
+                "notice":"TURN OFF",
+            }
+            systemicon = systemMap.get(system, "none")
+            if systemicon != "none" :
+                icon = Image.open(system + ".png")
+                system = systemicon
+            rom = f.readline()
+            rom = rom.replace("\n","")
+            game = unicode(rom)
+            game_length = len(game)
+            f.close()
+            ipaddr = get_ip_address(cmd, cmdeth)
+            ipaddr = ipaddr.replace("\n","")
+            new_Temp = get_cpu_temp()
+            new_Speed = int( get_cpu_speed() )
 
-                	draw.rectangle((0,0,width,height), outline=0, fill=0)
-                	draw.text((0, top), unicode(msg1).center(1,' '), font=font_system, fill=255)
-                	draw.text((0, top+15), unicode(msg2).center(2, ' '), font=font_rom, fill=255)
-                	draw.text((0, top+30), datetime.now().strftime( "%b %d %H:%M:%S" ), font=font_rom, fill=255)
-                	draw.text((0, top+45), "IP " + ipaddr, font=font_rom, fill=255)
-                        disp.image(image)
-                        disp.display()
-#			sleep(3)
-#			break
-			pass
-		else:
-			system = f.readline()
-			system = system.replace("\n","")
-			systemMap = {
-				"gba":"GameBoy Advance",
-				"mame-libretro":"MAME",
-				"msx":"MSX",
-				"fba":"FinalBurn Alpha",
-				"nes":"Famicom",   # Nintendo Entertainment System
-				"snes":"Super Famicom", # Super Nintendo Entertainment System
-				"notice":"TURN OFF",
-			}
-			system = systemMap.get(system)
-			rom = f.readline()
-			rom = rom.replace("\n","")
-			f.close()
-			
-			ipaddr = get_ip_address(cmd, cmdeth)
-			new_Temp = get_cpu_temp()
-			new_Speed = int( get_cpu_speed() )
+            if old_Temp != new_Temp or old_Speed != new_Speed :
+                old_Temp = new_Temp
+                old_Speed = new_Speed
+            # print datetime.now().strftime( "%b %d %H:%M:%S" )
+            # print "IP " + ipaddr
+            if game_length > 14:
+                draw.rectangle((0,0,width,height), outline=0, fill=0 )
+                if systemicon != "none" :
+                    image.paste(icon,(0,0))
+                else :
+                    draw.text( (0, top), unicode(system), font=font_system, fill=255 )
+                draw.text( (0, top+18), game[0:14], font=font_rom, fill=255 )
+                draw.text( (0, top+33), game[14:28], font=font_rom, fill=255 )
+                draw.text( (0, top+48), game[28:42], font=font_rom, fill=255 )
+                disp.image(image)
+                disp.display()
 
-			if old_Temp != new_Temp or old_Speed != new_Speed :
-				old_Temp = new_Temp
-				old_Speed = new_Speed
-			
-#			print datetime.now().strftime( "%b %d %H:%M:%S" )
-#			print "IP " + ipaddr
-                        draw.rectangle((0,0,width,height), outline=0, fill=0)
-			draw.text((0, top), unicode(system).center(1,' '), font=font_system, fill=255)
-			draw.text((0, top+15), unicode(rom).center(2, ' '), font=font_rom, fill=255)
-			draw.text((0, top+30), datetime.now().strftime( "%b %d %H:%M:%S" ), font=font_rom, fill=255)
-			draw.text((0, top+45), "IP " + ipaddr, font=font_rom, fill=255)
-                        disp.image(image)
-                        disp.display()
-			sleep(3)
+            else:
+                draw.rectangle((0,0,width,height), outline=0, fill=0 )
+                draw.text( (0, top), unicode(system), font=font_system, fill=255 )
+                draw.text( (0, top+18), game[0:14], font=font_rom, fill=255 )
+                draw.text((0, top+28), "CPU Temp: " + str( new_Temp ), font=fonte_rom, fill=255)
+                draw.text((0, top+46), "CPU Speed: " + str( new_Speed ), font=fonte_rom, fill=255)
+                disp.image(image)
+                disp.display()
 
-			draw.rectangle((0,0,width,height), outline=0, fill=0)
-			draw.text((0, top), unicode(system).center(1,' '), font=font_system, fill=255)
-			draw.text((0, top+15), unicode(rom).center(2, ' '), font=font_rom, fill=255)
-			draw.text((0, top+30), "CPU Temp: " + str( new_Temp ), font=font_rom, fill=255)
-			draw.text((0, top+45), "CPU Speed: " + str( new_Speed ), font=font_rom, fill=255)
-			disp.image(image)
-			disp.display()
-			sleep(3)
+            flag = "TURN OFF"
+            if system == flag:
+                wait = 2
+            else:
+                wait = 5
+            sleep(wait)
+
+            draw.rectangle((0,0,width,height), outline=0, fill=0)
+            draw.text((0, top), datetime.now().strftime( "%b %d %H:%M:%S" ), font=fonte_rom, fill=255)
+            draw.text((0, top+15), "IP " + ipaddr, font=fonte_rom, fill=255)
+            draw.text((0, top+30), "CPU Temp: " + str( new_Temp ), font=fonte_rom, fill=255)
+            draw.text((0, top+45), "CPU Speed: " + str( new_Speed ), font=fonte_rom, fill=255)
+            disp.image(image)
+            disp.display()
+            sleep(3)
 
 if __name__ == "__main__":
     import sys
