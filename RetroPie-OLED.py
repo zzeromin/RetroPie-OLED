@@ -153,13 +153,17 @@ def main():
             system = f.readline()
             system = system.replace("\n","")
             systemMap = {
-                "Berrycade":"Berrycade",
-                "fba":"FinalBurn Alpha",
+                "dosbox":"DOS BOX",
+				"arcade":"Arcade Game",
+				"fba":"FinalBurn Alpha",
                 "gba":"GameBoy Advance",
                 "kodi":"KODI",
                 "mame-mame4all":"MAME4ALL",
                 "mame-advmame":"AdvanceMAME",
                 "mame-libretro":"lr-MAME",
+				"megadrive":"SEGA Megadrive",
+				"genesis":"SEGA Genesis",
+				"mastersystem":"SEGA Mastersystem",
                 "msx":"MSX",
                 "nes":"Famicom",   # Nintendo Entertainment System
                 "psp":"PSPortable",    # PlayStation Portable
