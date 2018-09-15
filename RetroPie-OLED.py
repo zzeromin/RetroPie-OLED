@@ -169,9 +169,9 @@ def main():
             game_length = len(game)
             romfile = f.readline()
             romfile = romfile.replace("\n","")
-            print system
-            print rom
-            print romfile
+            #print system
+            #print rom
+            #print romfile
             f.close()
             new_Temp = round(get_cpu_temp(),1)
             new_Speed = int( get_cpu_speed() )
