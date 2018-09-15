@@ -101,17 +101,16 @@ def main():
     # Draw some shapes.
     # First define some constants to allow easy resizing of shapes.
 
-    padding = 0
+    padding = 2
     shape_width = 20
     top = padding
     bottom = height-padding
 
-    
     # Load default font.
     font_system = ImageFont.truetype('/home/pi/RetroPie-OLED/neodgm.ttf', 16)
     font_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/BM-HANNA.ttf', 16)
     fonte_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/lemon.ttf', 10)
-    
+
     #get ip address of eth0 connection
     #cmdeth = "ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
     #get ip address of wlan0 connection
@@ -130,7 +129,6 @@ def main():
             f = open('/dev/shm/runcommand.log', 'r')
             # except FileNotFoundError:
         except IOError:
-            #print "no runcommand"
             titleimg = Image.open("/home/pi/RetroPie-OLED/maintitle.png").convert('1')
             image.paste(titleimg,(0,0))
             disp.image(image)
@@ -175,17 +173,12 @@ def main():
             print rom
             print romfile
             f.close()
-            #ipaddr = get_ip_address(cmd, cmdeth)
-            #ipaddr = ipaddr.replace("\n","")
             new_Temp = round(get_cpu_temp(),1)
             new_Speed = int( get_cpu_speed() )
 
             if old_Temp != new_Temp or old_Speed != new_Speed :
                 old_Temp = new_Temp
                 old_Speed = new_Speed
-            # print datetime.now().strftime( "%b %d %H:%M:%S" )
-            # print "IP " + ipaddr
-            
             try:
                 titleimg = Image.open("/home/pi/RetroPie-OLED/gametitle/" + romfile + ".png").convert('1')
                 # except FileNotFoundError:
@@ -215,7 +208,7 @@ def main():
                 disp.image(image)
                 disp.display()
                 sleep(3)
-            
+
 if __name__ == "__main__":
     import sys
 
@@ -226,7 +219,6 @@ if __name__ == "__main__":
     except Exception as e:
         sys.stderr.write("Unexpected exception: %s" % e)
         sys.exit(1)
-        print e
 
     # Catch the remaining exit errors
     except:
