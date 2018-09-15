@@ -19,7 +19,7 @@
 cd /home/pi/RetroPie-OLED/
 cp runcommand-onstart.sh /opt/retropie/configs/all/
 cp runcommand-onend.sh /opt/retropie/configs/all/
-sed -i '1a\\/usr/bin/python /home/pi/RetroPie-OLED/RetroPie-OLED.py' /opt/retropie/configs/all/autostart.sh
+sed -i '1a\\/usr/bin/python /home/pi/RetroPie-OLED/RetroPie-OLED.py &' /opt/retropie/configs/all/autostart.sh
 echo "OLED Setup Complete."
 echo "I2C, Python Tools Setup are starting now"
 sleep 1
