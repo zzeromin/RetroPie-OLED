@@ -101,26 +101,25 @@ def main():
     # Draw some shapes.
     # First define some constants to allow easy resizing of shapes.
 
-    padding = 0
+    padding = 2
     shape_width = 20
     top = padding
     bottom = height-padding
 
-    
     # Load default font.
     font_system = ImageFont.truetype('/home/pi/RetroPie-OLED/neodgm.ttf', 16)
-    font_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/BM-HANNA.ttf', 16)
-    fonte_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/lemon.ttf', 10)
-    
+    font_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/d2.ttf', 11)
+    fonte_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/ProggySmall.ttf', 15)
+
     #get ip address of eth0 connection
-    #cmdeth = "ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
+    cmdeth = "ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
     #get ip address of wlan0 connection
-    #cmd = "ip addr show wlan0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
+    cmd = "ip addr show wlan0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
     #cmd = "ip addr show wlan1 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
 
     #get ip address of eth0 connection    
-    #ipaddr = get_ip_address(cmd, cmdeth)
-    #ipaddr = ipaddr.replace("\n","")
+    ipaddr = get_ip_address(cmd, cmdeth)
+    ipaddr = ipaddr.replace("\n","")
 
     old_Temp = new_Temp = round(get_cpu_temp(),1)
     old_Speed = new_Speed = get_cpu_speed()
@@ -130,9 +129,22 @@ def main():
             f = open('/dev/shm/runcommand.log', 'r')
             # except FileNotFoundError:
         except IOError:
-            #print "no runcommand"
-            titleimg = Image.open("/home/pi/RetroPie-OLED/maintitle.png").convert('1')
-            image.paste(titleimg,(0,0))
+            ipaddr = get_ip_address(cmd, cmdeth)
+            ipaddr = ipaddr.replace("\n","") 
+            msg1 = "라즈미니파이"
+            msg2 = "라즈겜동 텐타클 팀"
+            msg3 = datetime.now().strftime( "%b %d %H:%M:%S" )
+            msg4 = unicode( "IP " + ipaddr )
+            t1_size = draw.textsize(msg1, font=font_system)
+            t2_size = draw.textsize(msg2, font=font_rom)
+            t3_size = draw.textsize(msg3, font=fonte_rom)
+            t4_size = draw.textsize(msg4, font=fonte_rom)
+
+            draw.rectangle((0,0,width,height), outline=0, fill=0)
+            draw.text(((width-t1_size[0])/2, top), unicode(msg1), font=font_system, fill=255)
+            draw.text(((width-98)/2, top+18), unicode(msg2), font=font_rom, fill=255)
+            draw.text(((width-t3_size[0])/2, top+36), msg3, font=fonte_rom, fill=255)
+            draw.text(((width-t4_size[0])/2, top+48), msg4, font=fonte_rom, fill=255)
             disp.image(image)
             disp.display()
             sleep(3)
@@ -161,22 +173,18 @@ def main():
                 "snes":"Super Famicom", # Super Nintendo Entertainment System
                 "notice":"TURN OFF",
             }
+            flag = "TURN OFF" 
             systemicon = systemMap.get(system, "none")
             if systemicon != "none" :
-                icon = Image.open("/home/pi/RetroPie-OLED/system/" + system + ".png")
+                icon = Image.open("/home/pi/RetroPie-OLED/" + system + ".png")
                 system = systemicon
             rom = f.readline()
             rom = rom.replace("\n","")
             game = unicode(rom)
             game_length = len(game)
-            romfile = f.readline()
-            romfile = romfile.replace("\n","")
-            print system
-            print rom
-            print romfile
             f.close()
-            #ipaddr = get_ip_address(cmd, cmdeth)
-            #ipaddr = ipaddr.replace("\n","")
+            ipaddr = get_ip_address(cmd, cmdeth)
+            ipaddr = ipaddr.replace("\n","")
             new_Temp = round(get_cpu_temp(),1)
             new_Speed = int( get_cpu_speed() )
 
@@ -185,37 +193,35 @@ def main():
                 old_Speed = new_Speed
             # print datetime.now().strftime( "%b %d %H:%M:%S" )
             # print "IP " + ipaddr
-            
-            try:
-                titleimg = Image.open("/home/pi/RetroPie-OLED/gametitle/" + romfile + ".png").convert('1')
-                # except FileNotFoundError:
-            except IOError:
-                #print "no title image"
-                info = str( new_Temp ) + chr(0xB0) +"C"
-                system_size = draw.textsize(system, font=font_system)
-                gname = textwrap.wrap(game, width=10)
-                current_h, text_padding = 18, 2
-                draw.rectangle((0,0,width,height), outline=0, fill=0 )
-                if systemicon != "none" :
-                    image.paste(icon,(0,0))
-                else :
-                    draw.text( ((width-system_size[0])/2, top), unicode(system), font=font_system, fill=255 )
-                for line in gname:
-                    #print "text name display"
-                    gname_size = draw.textsize(line, font=font_rom)
-                    draw.text(((width - gname_size[0])/2, current_h), line, font=font_rom, fill=255)
-                    current_h += gname_size[1] + text_padding
-                draw.text((0, top+52), info , font=fonte_rom, fill=255)
-                disp.image(image)
-                disp.display()
-                sleep(3)
-                pass
+            system_size = draw.textsize(system, font=font_system)
+            gname = textwrap.wrap(game, width=10)
+            current_h, text_padding = 20, 2
+            draw.rectangle((0,0,width,height), outline=0, fill=0 )
+            if systemicon != "none" :
+                image.paste(icon,(0,0))
+            else :
+                draw.text( ((width-system_size[0])/2, top), unicode(system), font=font_system, fill=255 )
+            for line in gname:
+                #print "text name display"
+                gname_size = draw.textsize(line, font=font_rom)
+                draw.text(((width - gname_size[0])/2, current_h), line, font=font_rom, fill=255)
+                current_h += gname_size[1] + text_padding
+            disp.image(image)
+            disp.display()
+            if system == flag:
+                wait = 3
             else:
-                image.paste(titleimg,(0,0))
-                disp.image(image)
-                disp.display()
-                sleep(3)
-            
+                wait = 5
+            sleep(wait)
+            draw.rectangle((0,0,width,height), outline=0, fill=0)
+            draw.text((0, top+4), datetime.now().strftime( "%b %d %H:%M:%S" ), font=fonte_rom, fill=255)
+            draw.text((0, top+20), "IP " + ipaddr, font=fonte_rom, fill=255)
+            draw.text((0, top+36), "CPU Temp : " + str( new_Temp ), font=fonte_rom, fill=255)
+            draw.text((0, top+52), "CPU Speed: " + str( new_Speed ), font=fonte_rom, fill=255)
+            disp.image(image)
+            disp.display()
+            sleep(3)
+
 if __name__ == "__main__":
     import sys
 
@@ -226,7 +232,6 @@ if __name__ == "__main__":
     except Exception as e:
         sys.stderr.write("Unexpected exception: %s" % e)
         sys.exit(1)
-        print e
 
     # Catch the remaining exit errors
     except:
