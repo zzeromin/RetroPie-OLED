@@ -101,7 +101,7 @@ def main():
     # Draw some shapes.
     # First define some constants to allow easy resizing of shapes.
 
-    padding = 2
+    padding = 0
     shape_width = 20
     top = padding
     bottom = height-padding
@@ -112,9 +112,9 @@ def main():
     fonte_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/lemon.ttf', 10)
 
     #get ip address of eth0 connection
-    #cmdeth = "ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
+    cmdeth = "ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
     #get ip address of wlan0 connection
-    #cmd = "ip addr show wlan0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
+    cmd = "ip addr show wlan0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
     #cmd = "ip addr show wlan1 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
 
     #get ip address of eth0 connection    
@@ -175,10 +175,14 @@ def main():
             f.close()
             new_Temp = round(get_cpu_temp(),1)
             new_Speed = int( get_cpu_speed() )
-
+            ipaddr = get_ip_address(cmd, cmdeth)
+            ipaddr = ipaddr.replace("\n","")
             if old_Temp != new_Temp or old_Speed != new_Speed :
                 old_Temp = new_Temp
                 old_Speed = new_Speed
+            if game_length == 0 :
+                game = unicode(romfile)
+                game_length = len(game)
             try:
                 titleimg = Image.open("/home/pi/RetroPie-OLED/gametitle/" + romfile + ".png").convert('1')
                 # except FileNotFoundError:
@@ -187,7 +191,10 @@ def main():
                 info = str( new_Temp ) + chr(0xB0) +"C"
                 system_size = draw.textsize(system, font=font_system)
                 gname = textwrap.wrap(game, width=10)
-                current_h, text_padding = 18, 2
+                if game_length > 16:
+                    current_h, text_padding = 18, 0
+                else :
+                    current_h, text_padding = 22, 2
                 draw.rectangle((0,0,width,height), outline=0, fill=0 )
                 if systemicon != "none" :
                     image.paste(icon,(0,0))
@@ -198,7 +205,9 @@ def main():
                     gname_size = draw.textsize(line, font=font_rom)
                     draw.text(((width - gname_size[0])/2, current_h), line, font=font_rom, fill=255)
                     current_h += gname_size[1] + text_padding
-                draw.text((0, top+52), info , font=fonte_rom, fill=255)
+                draw.text((96, top+54), info , font=fonte_rom, fill=255)
+                if system == "TURN OFF":
+                    draw.text((0, top+54), "IP " + ipaddr, font=fonte_rom, fill=255)
                 disp.image(image)
                 disp.display()
                 sleep(3)
