@@ -19,7 +19,7 @@
 cd /home/pi/RetroPie-OLED/
 cp runcommand-onstart.sh /opt/retropie/configs/all/
 cp runcommand-onend.sh /opt/retropie/configs/all/
-sed -i '1a\\/usr/bin/python /home/pi/RetroPie-OLED/RetroPie-OLED.py &' /opt/retropie/configs/all/autostart.sh
+sed -i '1i\\/usr/bin/python /home/pi/RetroPie-OLED/RetroPie-OLED.py &' /opt/retropie/configs/all/autostart.sh
 echo "OLED Setup Complete."
 echo "I2C, Python Tools Setup are starting now"
 sleep 1
@@ -32,6 +32,10 @@ echo "Adafruit_Python_SSD1306 Setup is starting now"
 git clone https://github.com/adafruit/Adafruit_Python_SSD1306.git
 cd Adafruit_Python_SSD1306
 python setup.py install
+chgrp -R -v pi /home/pi/RetroPie-OLED
+chown -R -v pi /home/pi/RetroPie-OLED
+chgrp -R -v pi /opt/retropie/configs/all
+chown -R -v pi /opt/retropie/configs/all
 echo "All Setup Complete. Reboot after 3 Seconds."
 sleep 3
 reboot
