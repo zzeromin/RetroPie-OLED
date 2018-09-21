@@ -24,7 +24,7 @@ First, you should install Scraper( https://github.com/retropie/retropie-setup/wi
 
 Second, Install below:
 <pre><code>cd /home/pi
-git clone https://github.com/zzeromin/RetroPie-OLED.git
+git clone https://github.com/losernator/RetroPie-OLED.git
 cd /home/pi/RetroPie-OLED/
 chmod 755 11.OLED.sh
 sudo ./11.OLED.sh
