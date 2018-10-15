@@ -50,7 +50,7 @@ SPI_DEVICE = 0
 disp = Adafruit_SSD1306.SSD1306_128_64(rst=RST)
 
 def run_cmd(cmd):
-# runs whatever is in the cmd variable in the terminal
+# runs whatever in the cmd variable
     p = Popen(cmd, shell=True, stdout=PIPE)
     output = p.communicate()[0]
     return output
@@ -102,7 +102,6 @@ def main():
     # First define some constants to allow easy resizing of shapes.
 
     padding = 0
-    shape_width = 20
     top = padding
     bottom = height-padding
 
@@ -110,6 +109,7 @@ def main():
     font_system = ImageFont.truetype('/home/pi/RetroPie-OLED/neodgm.ttf', 16)
     font_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/BM-HANNA.ttf', 16)
     fonte_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/lemon.ttf', 10)
+    font_msg = ImageFont.truetype('/home/pi/RetroPie-OLED/d2.ttf', 11)
 
     #get ip address of eth0 connection
     cmdeth = "ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
@@ -117,25 +117,44 @@ def main():
     cmd = "ip addr show wlan0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
     #cmd = "ip addr show wlan1 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
 
-    #get ip address of eth0 connection    
-    #ipaddr = get_ip_address(cmd, cmdeth)
-    #ipaddr = ipaddr.replace("\n","")
-
-    old_Temp = new_Temp = round(get_cpu_temp(),1)
-    old_Speed = new_Speed = get_cpu_speed()
+    new_Temp = round(get_cpu_temp(),1)
+    #old_Speed = new_Speed = get_cpu_speed()
 
     while True:
         try:
             f = open('/dev/shm/runcommand.log', 'r')
             # except FileNotFoundError:
         except IOError:
-            titleimg = Image.open("/home/pi/RetroPie-OLED/maintitle.png").convert('1')
-            image.paste(titleimg,(0,0))
-            disp.image(image)
-            disp.display()
-            sleep(3)
-            #break
-            pass
+            try:
+                titleimg = Image.open("/home/pi/RetroPie-OLED/maintitle.png").convert('1')
+            except IOError:
+                ipaddr = get_ip_address(cmd, cmdeth)
+                ipaddr = ipaddr.replace("\n","")
+                new_Temp = round(get_cpu_temp(),1)
+                info = str( new_Temp ) + chr(0xB0) +"C"
+
+                msg1 = "라즈미니파이"
+                msg2 = "라즈겜동 텐타클 팀"
+            
+                msg1_size = draw.textsize(msg1, font=font_system)
+                msg2_size = draw.textsize(msg2, font=font_msg)
+
+                draw.rectangle((0,0,width,height), outline=0, fill=0)
+                draw.text(((width-msg1_size[0])/2, top), unicode(msg1), font=font_system, fill=255)
+                draw.text(((width-98)/2, top+18), unicode(msg2), font=font_msg, fill=255)
+                draw.text((96, top+54), info , font=fonte_rom, fill=255)
+                draw.text((0, top+54), + ipaddr, font=fonte_rom, fill=255)
+
+                disp.image(image)
+                disp.display()
+                sleep(3)
+                #break
+                pass
+            else:
+                image.paste(titleimg,(0,0))
+                disp.image(image)
+                disp.display()
+                sleep(3)
         else:
             system = f.readline()
             system = system.replace("\n","")
@@ -169,17 +188,10 @@ def main():
             game_length = len(game)
             romfile = f.readline()
             romfile = romfile.replace("\n","")
-            #print system
-            #print rom
-            #print romfile
             f.close()
             new_Temp = round(get_cpu_temp(),1)
-            new_Speed = int( get_cpu_speed() )
             ipaddr = get_ip_address(cmd, cmdeth)
             ipaddr = ipaddr.replace("\n","")
-            if old_Temp != new_Temp or old_Speed != new_Speed :
-                old_Temp = new_Temp
-                old_Speed = new_Speed
             if game_length == 0 :
                 game = unicode(romfile)
                 game_length = len(game)
@@ -207,7 +219,7 @@ def main():
                     current_h += gname_size[1] + text_padding
                 draw.text((96, top+54), info , font=fonte_rom, fill=255)
                 if system == "TURN OFF":
-                    draw.text((0, top+54), "IP " + ipaddr, font=fonte_rom, fill=255)
+                    draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
                 disp.image(image)
                 disp.display()
                 sleep(3)
