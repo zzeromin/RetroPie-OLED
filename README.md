@@ -23,7 +23,9 @@ running on Raspberry Pi 2,3, which displays all necessary info on a 128x64 OLED 
 First, you should install Scraper( https://github.com/retropie/retropie-setup/wiki/scraper )
 
 Second, Install below:
-<pre><code>cd /home/pi
+<pre><code>
+sudo apt-get update
+cd /home/pi
 git clone https://github.com/losernator/RetroPie-OLED.git
 cd /home/pi/RetroPie-OLED/
 chmod 755 11.OLED.sh
