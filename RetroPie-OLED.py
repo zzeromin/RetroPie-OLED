@@ -180,7 +180,7 @@ def main():
             }
             systemicon = systemMap.get(system, "none")
             if systemicon != "none" :
-                icon = Image.open("/home/pi/RetroPie-OLED/system/" + system + ".png")
+                icon = Image.open("/home/pi/RetroPie-OLED/system/" + system + ".png").convert('1')
                 system = systemicon
             rom = f.readline()
             rom = rom.replace("\n","")
@@ -217,8 +217,8 @@ def main():
                     gname_size = draw.textsize(line, font=font_rom)
                     draw.text(((width - gname_size[0])/2, current_h), line, font=font_rom, fill=255)
                     current_h += gname_size[1] + text_padding
-                draw.text((96, top+54), info , font=fonte_rom, fill=255)
                 if system == "TURN OFF":
+                    draw.text((96, top+54), info , font=fonte_rom, fill=255)
                     draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
                 disp.image(image)
                 disp.display()
