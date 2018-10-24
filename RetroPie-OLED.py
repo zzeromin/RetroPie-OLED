@@ -206,7 +206,7 @@ def main():
                 if game_length > 16:
                     current_h, text_padding = 18, 0
                 else :
-                    current_h, text_padding = 22, 2
+                    current_h, text_padding = 26, 2
                 draw.rectangle((0,0,width,height), outline=0, fill=0 )
                 if systemicon != "none" :
                     image.paste(icon,(0,0))
