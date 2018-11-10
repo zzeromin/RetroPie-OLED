@@ -7,5 +7,5 @@
 
 sed '1,$d' /dev/shm/runcommand.log > /dev/shm/runcommand.log
 echo "notice" >&2
-echo "PLZ GO TO SLEEP!" >&2
+echo "RasMiniPi" >&2
 echo "maintitle" >&2
