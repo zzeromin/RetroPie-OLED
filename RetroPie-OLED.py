@@ -143,7 +143,7 @@ def main():
                 draw.text(((width-msg1_size[0])/2, top), unicode(msg1), font=font_system, fill=255)
                 draw.text(((width-98)/2, top+18), unicode(msg2), font=font_msg, fill=255)
                 draw.text((96, top+54), info , font=fonte_rom, fill=255)
-                draw.text((0, top+54), + ipaddr, font=fonte_rom, fill=255)
+                draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
 
                 disp.image(image)
                 disp.display()
