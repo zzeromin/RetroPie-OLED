@@ -192,6 +192,8 @@ def main():
             new_Temp = round(get_cpu_temp(),1)
             ipaddr = get_ip_address(cmd, cmdeth)
             ipaddr = ipaddr.replace("\n","")
+            info = str( new_Temp ) + chr(0xB0) +"C"
+            
             if game_length == 0 :
                 game = unicode(romfile)
                 game_length = len(game)
@@ -200,7 +202,6 @@ def main():
                 # except FileNotFoundError:
             except IOError:
                 #print "no title image"
-                info = str( new_Temp ) + chr(0xB0) +"C"
                 system_size = draw.textsize(system, font=font_system)
                 gname = textwrap.wrap(game, width=10)
                 if game_length > 16:
@@ -226,6 +227,9 @@ def main():
                 pass
             else:
                 image.paste(titleimg,(0,0))
+                if system == "TURN OFF":
+                    draw.text((96, top+54), info , font=fonte_rom, fill=255)
+                    draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
                 disp.image(image)
                 disp.display()
                 sleep(3)
