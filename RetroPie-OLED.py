@@ -151,7 +151,10 @@ def main():
                 #break
                 pass
             else:
+                ipaddr = get_ip_address(cmd, cmdeth)
+                ipaddr = ipaddr.replace("\n","")
                 image.paste(titleimg,(0,0))
+                draw.text((34, top+54), ipaddr, font=fonte_rom, fill=255)
                 disp.image(image)
                 disp.display()
                 sleep(3)
@@ -228,6 +231,7 @@ def main():
             else:
                 image.paste(titleimg,(0,0))
                 if system == "TURN OFF":
+                    draw.text((0, top+44), datetime.now().strftime( "%b %d %H:%M" ), font=fonte_rom, fill=255)
                     draw.text((96, top+54), info , font=fonte_rom, fill=255)
                     draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
                 disp.image(image)
