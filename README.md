@@ -1,8 +1,9 @@
 # RetroPie-OLED
 Show Game Title on 128x64 OLED I2C Display for RetroPie v4.0.2+
 
-<img src="https://github.com/losernator/RetroPie-OLED/blob/master/RetroPie-OLED01.jpg" width="50%" height="50%">
-<img src="https://github.com/losernator/RetroPie-OLED/blob/master/RetroPie-OLED02.jpg" width="50%" height="50%">
+![oled example00](RetroPie-OLED01.jpg)
+![oled example01](RetroPie-OLED02.jpg)
+
 
 ## About
 This script written in Python for RetroPie project (https://retropie.org.uk/) 
@@ -39,4 +40,4 @@ sudo ./11.OLED.sh
 
 * Raspberry Pi I2C GPIO Pinout
 
-![Alt text](https://i.imgur.com/WTPHzsf.png)
+![i2c](RetroPie-OLED03.png)
