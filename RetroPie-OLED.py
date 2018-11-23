@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 Title        : RetroPie_OLED.py
-Author       : zzeromin, member of Raspberrypi Village
+Author   : zzeromin, member of Raspberrypi Village
 Creation Date: Nov 13, 2016
-Blog         : http://rasplay.org, http://forums.rasplay.org/, https://zzeromin.tumblr.com/
+Blog        : http://rasplay.org, http://forums.rasplay.org/, https://zzeromin.tumblr.com/
 Thanks to    : smyani, zerocool, GreatKStar
 Free and open for all to use. But put credit where credit is due.
 
@@ -31,6 +31,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+import textwrap
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -49,7 +50,7 @@ SPI_DEVICE = 0
 disp = Adafruit_SSD1306.SSD1306_128_64(rst=RST)
 
 def run_cmd(cmd):
-    # runs whatever is in the cmd variable in the terminal
+# runs whatever in the cmd variable
     p = Popen(cmd, shell=True, stdout=PIPE)
     output = p.communicate()[0]
     return output
@@ -99,15 +100,16 @@ def main():
 
     # Draw some shapes.
     # First define some constants to allow easy resizing of shapes.
-    padding = 2
-    shape_width = 20
+
+    padding = 0
     top = padding
     bottom = height-padding
-    x = padding
 
     # Load default font.
-    font_system = ImageFont.truetype('/home/pi/RetroPie-OLED/NanumGothic_Coding_Bold.ttf', 15)
-    font_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/NanumGothic_Coding_Bold.ttf', 15)
+    font_system = ImageFont.truetype('/home/pi/RetroPie-OLED/neodgm.ttf', 16)
+    font_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/BM-HANNA.ttf', 16)
+    fonte_rom = ImageFont.truetype('/home/pi/RetroPie-OLED/lemon.ttf', 10)
+    font_msg = ImageFont.truetype('/home/pi/RetroPie-OLED/d2.ttf', 11)
 
     #get ip address of eth0 connection
     cmdeth = "ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
@@ -115,77 +117,126 @@ def main():
     cmd = "ip addr show wlan0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
     #cmd = "ip addr show wlan1 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
 
-    #get ip address of eth0 connection    
-    ipaddr = get_ip_address(cmd, cmdeth)
-
-    old_Temp = new_Temp = get_cpu_temp()
-    old_Speed = new_Speed = get_cpu_speed()
+    new_Temp = round(get_cpu_temp(),1)
+    #old_Speed = new_Speed = get_cpu_speed()
 
     while True:
-#		draw.rectangle((0,0,width,height), outline=0, fill=0)
+        try:
+            f = open('/dev/shm/runcommand.log', 'r')
+            # except FileNotFoundError:
+        except IOError:
+            try:
+                titleimg = Image.open("/home/pi/RetroPie-OLED/maintitle.png").convert('1')
+            except IOError:
+                ipaddr = get_ip_address(cmd, cmdeth)
+                ipaddr = ipaddr.replace("\n","")
+                new_Temp = round(get_cpu_temp(),1)
+                info = str( new_Temp ) + chr(0xB0) +"C"
 
-		try:
-			f = open('/dev/shm/runcommand.log', 'r')
-#                except FileNotFoundError:
-		except IOError:
-                	msg1 = "Welcome"
-                	msg2 = "RetroPie v4.1"
-                	ipaddr = get_ip_address(cmd, cmdeth)
+                msg1 = "라즈미니파이"
+                msg2 = "라즈겜동 텐타클 팀"
+            
+                msg1_size = draw.textsize(msg1, font=font_system)
+                msg2_size = draw.textsize(msg2, font=font_msg)
 
-                	draw.rectangle((0,0,width,height), outline=0, fill=0)
-                	draw.text((0, top), unicode(msg1).center(1,' '), font=font_system, fill=255)
-                	draw.text((0, top+15), unicode(msg2).center(2, ' '), font=font_rom, fill=255)
-                	draw.text((0, top+30), datetime.now().strftime( "%b %d %H:%M:%S" ), font=font_rom, fill=255)
-                	draw.text((0, top+45), "IP " + ipaddr, font=font_rom, fill=255)
-                        disp.image(image)
-                        disp.display()
-#			sleep(3)
-#			break
-			pass
-		else:
-			system = f.readline()
-			system = system.replace("\n","")
-			systemMap = {
-				"gba":"GameBoy Advance",
-				"mame-libretro":"MAME",
-				"msx":"MSX",
-				"fba":"FinalBurn Alpha",
-				"nes":"Famicom",   # Nintendo Entertainment System
-				"snes":"Super Famicom", # Super Nintendo Entertainment System
-				"notice":"TURN OFF",
-			}
-			system = systemMap.get(system)
-			rom = f.readline()
-			rom = rom.replace("\n","")
-			f.close()
-			
-			ipaddr = get_ip_address(cmd, cmdeth)
-			new_Temp = get_cpu_temp()
-			new_Speed = int( get_cpu_speed() )
+                draw.rectangle((0,0,width,height), outline=0, fill=0)
+                draw.text(((width-msg1_size[0])/2, top), unicode(msg1), font=font_system, fill=255)
+                draw.text(((width-98)/2, top+18), unicode(msg2), font=font_msg, fill=255)
+                draw.text((96, top+54), info , font=fonte_rom, fill=255)
+                draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
 
-			if old_Temp != new_Temp or old_Speed != new_Speed :
-				old_Temp = new_Temp
-				old_Speed = new_Speed
-			
-#			print datetime.now().strftime( "%b %d %H:%M:%S" )
-#			print "IP " + ipaddr
-                        draw.rectangle((0,0,width,height), outline=0, fill=0)
-			draw.text((0, top), unicode(system).center(1,' '), font=font_system, fill=255)
-			draw.text((0, top+15), unicode(rom).center(2, ' '), font=font_rom, fill=255)
-			draw.text((0, top+30), datetime.now().strftime( "%b %d %H:%M:%S" ), font=font_rom, fill=255)
-			draw.text((0, top+45), "IP " + ipaddr, font=font_rom, fill=255)
-                        disp.image(image)
-                        disp.display()
-			sleep(3)
-
-			draw.rectangle((0,0,width,height), outline=0, fill=0)
-			draw.text((0, top), unicode(system).center(1,' '), font=font_system, fill=255)
-			draw.text((0, top+15), unicode(rom).center(2, ' '), font=font_rom, fill=255)
-			draw.text((0, top+30), "CPU Temp: " + str( new_Temp ), font=font_rom, fill=255)
-			draw.text((0, top+45), "CPU Speed: " + str( new_Speed ), font=font_rom, fill=255)
-			disp.image(image)
-			disp.display()
-			sleep(3)
+                disp.image(image)
+                disp.display()
+                sleep(3)
+                #break
+                pass
+            else:
+                ipaddr = get_ip_address(cmd, cmdeth)
+                ipaddr = ipaddr.replace("\n","")
+                image.paste(titleimg,(0,0))
+                draw.text((34, top+54), ipaddr, font=fonte_rom, fill=255)
+                disp.image(image)
+                disp.display()
+                sleep(3)
+        else:
+            system = f.readline()
+            system = system.replace("\n","")
+            systemMap = {
+                "dosbox":"DOS BOX",
+                "arcade":"Arcade Game",
+                "fba":"FinalBurn Alpha",
+                "gba":"GameBoy Advance",
+                "kodi":"KODI",
+                "mame-mame4all":"MAME4ALL",
+                "mame-advmame":"AdvanceMAME",
+                "mame-libretro":"lr-MAME",
+                "megadrive":"SEGA Megadrive",
+                "genesis":"SEGA Genesis",
+                "mastersystem":"SEGA Mastersystem",
+                "msx":"MSX",
+                "nes":"Famicom",   # Nintendo Entertainment System
+                "psp":"PSPortable",    # PlayStation Portable
+                "psx":"Playstation",
+                "ports":"Ports",
+                "snes":"Super Famicom", # Super Nintendo Entertainment System
+                "notice":"TURN OFF",
+            }
+            systemicon = systemMap.get(system, "none")
+            if systemicon != "none" :
+                icon = Image.open("/home/pi/RetroPie-OLED/system/" + system + ".png").convert('1')
+                system = systemicon
+            rom = f.readline()
+            rom = rom.replace("\n","")
+            game = unicode(rom)
+            game_length = len(game)
+            romfile = f.readline()
+            romfile = romfile.replace("\n","")
+            f.close()
+            new_Temp = round(get_cpu_temp(),1)
+            ipaddr = get_ip_address(cmd, cmdeth)
+            ipaddr = ipaddr.replace("\n","")
+            info = str( new_Temp ) + chr(0xB0) +"C"
+            
+            if game_length == 0 :
+                game = unicode(romfile)
+                game_length = len(game)
+            try:
+                titleimg = Image.open("/home/pi/RetroPie-OLED/gametitle/" + romfile + ".png").convert('1')
+                # except FileNotFoundError:
+            except IOError:
+                #print "no title image"
+                system_size = draw.textsize(system, font=font_system)
+                gname = textwrap.wrap(game, width=10)
+                if game_length > 16:
+                    current_h, text_padding = 18, 0
+                else :
+                    current_h, text_padding = 26, 2
+                draw.rectangle((0,0,width,height), outline=0, fill=0 )
+                if systemicon != "none" :
+                    image.paste(icon,(0,0))
+                else :
+                    draw.text( ((width-system_size[0])/2, top), unicode(system), font=font_system, fill=255 )
+                for line in gname:
+                    #print "text name display"
+                    gname_size = draw.textsize(line, font=font_rom)
+                    draw.text(((width - gname_size[0])/2, current_h), line, font=font_rom, fill=255)
+                    current_h += gname_size[1] + text_padding
+                if system == "TURN OFF":
+                    draw.text((96, top+54), info , font=fonte_rom, fill=255)
+                    draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
+                disp.image(image)
+                disp.display()
+                sleep(3)
+                pass
+            else:
+                image.paste(titleimg,(0,0))
+                if system == "TURN OFF":
+                    draw.text((0, top+44), datetime.now().strftime( "%b %d %H:%M" ), font=fonte_rom, fill=255)
+                    draw.text((96, top+54), info , font=fonte_rom, fill=255)
+                    draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
+                disp.image(image)
+                disp.display()
+                sleep(3)
 
 if __name__ == "__main__":
     import sys
