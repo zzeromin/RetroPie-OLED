@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Title        : RetroPie_OLED.py
-Author   : zzeromin, member of Raspberrypi Village
+Author   : zzeromin, losernator and members of Tentacle Team
 Creation Date: Nov 13, 2016
 Blog        : http://rasplay.org, http://forums.rasplay.org/, https://zzeromin.tumblr.com/
 Thanks to    : smyani, zerocool, GreatKStar
