@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Title        : RetroPie_OLED.py
-Author       : zzeromin and losernator are members of Tentacle Team
+Author       : zzeromin, losernator and members of Tentacle Team
 Creation Date: Nov 13, 2016
 Cafe         : http://cafe.naver.com/raspigamer
 Thanks to    : smyani, zerocool, GreatKStar and members of Raspigamer Cafe.
@@ -19,10 +19,13 @@ This code edited for rpi3 Retropie v4.0.2 and later by zzeromin
 
 import time
 import os
+
+
 from sys import exit
 from subprocess import *
 from time import *
 from datetime import datetime
+from random import randint
 
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_SSD1306
@@ -151,10 +154,13 @@ def main():
                 #break
                 pass
             else:
+                rx = randint(0, 4) - 2
+                ry = randint(0, 2) - 1
                 ipaddr = get_ip_address(cmd, cmdeth)
                 ipaddr = ipaddr.replace("\n","")
-                image.paste(titleimg,(0,0))
-                draw.text((34, top+54), ipaddr, font=fonte_rom, fill=255)
+                draw.rectangle((0,0,width,height), outline=0, fill=0)
+                image.paste(titleimg,(rx,ry))
+                draw.text((34+rx, top+54+ry), ipaddr, font=fonte_rom, fill=255)
                 disp.image(image)
                 disp.display()
                 sleep(3)
@@ -207,33 +213,39 @@ def main():
                 #print "no title image"
                 system_size = draw.textsize(system, font=font_system)
                 gname = textwrap.wrap(game, width=10)
+                rx = randint(0, 4) - 2
+                ry = randint(0, 2) - 1
+                
                 if game_length > 16:
                     current_h, text_padding = 18, 0
                 else :
                     current_h, text_padding = 26, 2
                 draw.rectangle((0,0,width,height), outline=0, fill=0 )
                 if systemicon != "none" :
-                    image.paste(icon,(0,0))
+                    image.paste(icon,(0+rx,0+ry))
                 else :
-                    draw.text( ((width-system_size[0])/2, top), unicode(system), font=font_system, fill=255 )
+                    draw.text( ((width-system_size[0])/2+rx, top+ry), unicode(system), font=font_system, fill=255 )
                 for line in gname:
                     #print "text name display"
                     gname_size = draw.textsize(line, font=font_rom)
-                    draw.text(((width - gname_size[0])/2, current_h), line, font=font_rom, fill=255)
+                    draw.text(((width - gname_size[0])/2+rx, current_h+ry), line, font=font_rom, fill=255)
                     current_h += gname_size[1] + text_padding
                 if system == "TURN OFF":
-                    draw.text((96, top+54), info , font=fonte_rom, fill=255)
-                    draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
+                    draw.text((96+rx, top+54+ry), info , font=fonte_rom, fill=255)
+                    draw.text((0+rx, top+54+ry), ipaddr, font=fonte_rom, fill=255)
                 disp.image(image)
                 disp.display()
                 sleep(3)
                 pass
             else:
-                image.paste(titleimg,(0,0))
+                rx = randint(0, 4) - 2
+                ry = randint(0, 2) - 1
+                draw.rectangle((0,0,width,height), outline=0, fill=0 )
+                image.paste(titleimg,(0+rx,0+ry))
                 if system == "TURN OFF":
-                    draw.text((0, top+44), datetime.now().strftime( "%b %d %H:%M" ), font=fonte_rom, fill=255)
-                    draw.text((96, top+54), info , font=fonte_rom, fill=255)
-                    draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
+                    draw.text((0+rx, top+44+ry), datetime.now().strftime( "%b %d %H:%M" ), font=fonte_rom, fill=255)
+                    draw.text((96+rx, top+54+ry), info , font=fonte_rom, fill=255)
+                    draw.text((0+rx, top+54+ry), ipaddr, font=fonte_rom, fill=255)
                 disp.image(image)
                 disp.display()
                 sleep(3)
