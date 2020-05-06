@@ -14,7 +14,9 @@ Thanks to members of Raspigamer forum for all the hard work
 
 ## HOW DOES IT WORK
 First, looking for title image from 'gametitle' folder with same filename of rom.
+
 If no match, display title name from gamelist.xml(scraped metadata).
+
 Could not find any info, then display the file name.
 
 ## Features
@@ -45,5 +47,6 @@ chmod 755 install.sh
 </code></pre>
 
 * Raspberry Pi I2C GPIO Pinout
+
 FYI, VCC could be different by manufacturer (5v or 3.3v)
 ![i2c](RetroPie-OLED03.png)
