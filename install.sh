@@ -8,11 +8,11 @@
 # Free and open for all to use. But put credit where credit is due.
 #
 # Install      :
-# cd /home/pi
+# cd ~
 # git clone https://github.com/zzeromin/RetroPie-OLED.git
-# cd /home/pi/RetroPie-OLED/
-# chmod 755 11.OLED.sh
-# sudo ./11.OLED.sh
+# cd RetroPie-OLED
+# chmod 755 install.sh
+# sudo ./install.sh
 #
 # Reference    :
 # https://github.com/ipromiseyou/RetroPie-AutoSet.git
@@ -20,7 +20,14 @@
 
 #get script path
 scriptfile=$(readlink -f $0)
-installpath =`dirname $scriptfile`
+installpath=`dirname $scriptfile`
+
+#run as root user
+if [ "$(whoami)" != "root" ]; then
+	echo "Switching to root user..."
+	sudo bash $scriptfile $*
+	exit 1
+fi
 
 cd $installpath
 cp runcommand-onstart.sh /opt/retropie/configs/all/
@@ -30,15 +37,12 @@ chown pi /opt/retropie/configs/all/runcommand-onstart.sh
 chgrp pi /opt/retropie/configs/all/runcommand-onend.sh
 chown pi /opt/retropie/configs/all/runcommand-onend.sh
 
-#delete previous line
 sed -i '/RetroPie-OLED/d' /opt/retropie/configs/all/autostart.sh
 sed -i '1i\\python3 '$installpath'/RetroPie-OLED.py &' /opt/retropie/configs/all/autostart.sh
 echo "OLED Setup Complete."
 echo "I2C, Python Tools Setup are starting now"
 sleep 1
 
-
-#delete previous line
 sudo sed -i '/dtparam=i2c_arm=on/d' /boot/config.txt
 sudo sed -i '/dtparam=i2c_arm_baudrate=400000/d' /boot/config.txt
 sudo sed -i '/dtparam=i2c_dev=on/d' /boot/config.txt
