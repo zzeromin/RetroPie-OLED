@@ -1,5 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
+
 """
 Title        : RetroPie_OLED.py
 Author       : zzeromin, losernator and members of Tentacle Team
@@ -9,35 +10,42 @@ Thanks to    : smyani, zerocool, GreatKStar and members of Raspigamer Cafe.
 Free and open for all to use. But put credit where credit is due.
 
 Reference    :
-https://github.com/adafruit/Adafruit_Python_SSD1306.git
 https://github.com/haven-jeon/piAu_volumio
+https://github.com/adafruit/Adafruit_CircuitPython_SSD1306
+https://pillow.readthedocs.io/en/stable/
 
 Notice       :
-installed python package: python-pip python-imaging python-dev python-smbus i2c-tools
+installed package(apt): python3-pip python3-dev python3-smbus i2c-tools
+installed package(pip): Pillow, adafruit-circuitpython-ssd1306
+
 This code edited for rpi3 Retropie v4.0.2 and later by zzeromin
 """
 
 import time
 import os
-
+import board
+import textwrap
+import busio
+import adafruit_ssd1306
 
 from sys import exit
 from subprocess import *
 from time import *
 from datetime import datetime
 from random import randint
+from PIL import Image, ImageDraw, ImageFont
+from board import SCL, SDA
+#from board import SCL, SDA
 
-import Adafruit_GPIO.SPI as SPI
-import Adafruit_SSD1306
+# Create the I2C interface.
+i2c = busio.I2C(SCL, SDA)
 
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-
-import textwrap
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+# Create the SSD1306 OLED class.
+# The first two parameters are the pixel width and pixel height.  Change these
+# to the right size for your display!
+oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c)
+# Alternatively you can change the I2C address of the device with an addr parameter:
+#oled = adafruit_ssd1306.SSD1306_I2C(128, 64, i2c, addr=0x31)
 
 # Raspberry Pi pin configuration:
 RST = 24
@@ -45,12 +53,6 @@ RST = 24
 DC = 23
 SPI_PORT = 0
 SPI_DEVICE = 0
-
-# 128x32 display with hardware I2C:
-#disp = Adafruit_SSD1306.SSD1306_128_32(rst=RST)
-
-# 128x64 display with hardware I2C:
-disp = Adafruit_SSD1306.SSD1306_128_64(rst=RST)
 
 def run_cmd(cmd):
 # runs whatever in the cmd variable
@@ -82,17 +84,14 @@ def get_cpu_speed():
 
 def main():
 
-    # Initialize library.
-    disp.begin()
-
     # Clear display.
-    disp.clear()
-    disp.display()
+    oled.fill(0)
+    oled.show()
 
     # Create blank image for drawing.
     # Make sure to create image with mode '1' for 1-bit color.
-    width = disp.width
-    height = disp.height
+    width = oled.width
+    height = oled.height
     image = Image.new('1', (width, height))
 
     # Get drawing object to draw on image.
@@ -100,9 +99,6 @@ def main():
 
     # Draw a black filled box to clear the image.
     draw.rectangle((0,0,width,height), outline=0, fill=0)
-
-    # Draw some shapes.
-    # First define some constants to allow easy resizing of shapes.
 
     padding = 0
     top = padding
@@ -132,24 +128,25 @@ def main():
                 titleimg = Image.open("/home/pi/RetroPie-OLED/maintitle.png").convert('1')
             except IOError:
                 ipaddr = get_ip_address(cmd, cmdeth)
+                ipaddr = ipaddr.decode('utf-8')
                 ipaddr = ipaddr.replace("\n","")
                 new_Temp = round(get_cpu_temp(),1)
                 info = str( new_Temp ) + chr(0xB0) +"C"
 
                 msg1 = "라즈미니파이"
                 msg2 = "라즈겜동 텐타클 팀"
-            
+
                 msg1_size = draw.textsize(msg1, font=font_system)
                 msg2_size = draw.textsize(msg2, font=font_msg)
 
                 draw.rectangle((0,0,width,height), outline=0, fill=0)
-                draw.text(((width-msg1_size[0])/2, top), unicode(msg1), font=font_system, fill=255)
-                draw.text(((width-98)/2, top+18), unicode(msg2), font=font_msg, fill=255)
+                draw.text(((width-msg1_size[0])/2, top), msg1, font=font_system, fill=255)
+                draw.text(((width-98)/2, top+18), msg2, font=font_msg, fill=255)
                 draw.text((96, top+54), info , font=fonte_rom, fill=255)
                 draw.text((0, top+54), ipaddr, font=fonte_rom, fill=255)
 
-                disp.image(image)
-                disp.display()
+                oled.image(image)
+                oled.show()
                 sleep(3)
                 #break
                 pass
@@ -157,12 +154,13 @@ def main():
                 rx = randint(0, 4) - 2
                 ry = randint(0, 2) - 1
                 ipaddr = get_ip_address(cmd, cmdeth)
+                ipaddr = ipaddr.decode('utf-8')
                 ipaddr = ipaddr.replace("\n","")
                 draw.rectangle((0,0,width,height), outline=0, fill=0)
                 image.paste(titleimg,(rx,ry))
                 draw.text((34+rx, top+54+ry), ipaddr, font=fonte_rom, fill=255)
-                disp.image(image)
-                disp.display()
+                oled.image(image)
+                oled.show()
                 sleep(3)
         else:
             system = f.readline()
@@ -193,18 +191,19 @@ def main():
                 system = systemicon
             rom = f.readline()
             rom = rom.replace("\n","")
-            game = unicode(rom)
+            game = rom
             game_length = len(game)
             romfile = f.readline()
             romfile = romfile.replace("\n","")
             f.close()
             new_Temp = round(get_cpu_temp(),1)
             ipaddr = get_ip_address(cmd, cmdeth)
+            ipaddr = ipaddr.decode('utf-8')
             ipaddr = ipaddr.replace("\n","")
             info = str( new_Temp ) + chr(0xB0) +"C"
-            
+
             if game_length == 0 :
-                game = unicode(romfile)
+                game = romfile
                 game_length = len(game)
             try:
                 titleimg = Image.open("/home/pi/RetroPie-OLED/gametitle/" + romfile + ".png").convert('1')
@@ -215,7 +214,7 @@ def main():
                 gname = textwrap.wrap(game, width=10)
                 rx = randint(0, 4) - 2
                 ry = randint(0, 2) - 1
-                
+
                 if game_length > 16:
                     current_h, text_padding = 18, 0
                 else :
@@ -224,7 +223,7 @@ def main():
                 if systemicon != "none" :
                     image.paste(icon,(0+rx,0+ry))
                 else :
-                    draw.text( ((width-system_size[0])/2+rx, top+ry), unicode(system), font=font_system, fill=255 )
+                    draw.text( ((width-system_size[0])/2+rx, top+ry), system, font=font_system, fill=255 )
                 for line in gname:
                     #print "text name display"
                     gname_size = draw.textsize(line, font=font_rom)
@@ -233,8 +232,8 @@ def main():
                 if system == "TURN OFF":
                     draw.text((96+rx, top+54+ry), info , font=fonte_rom, fill=255)
                     draw.text((0+rx, top+54+ry), ipaddr, font=fonte_rom, fill=255)
-                disp.image(image)
-                disp.display()
+                oled.image(image)
+                oled.show()
                 sleep(3)
                 pass
             else:
@@ -243,11 +242,11 @@ def main():
                 draw.rectangle((0,0,width,height), outline=0, fill=0 )
                 image.paste(titleimg,(0+rx,0+ry))
                 if system == "TURN OFF":
-                    draw.text((0+rx, top+44+ry), datetime.now().strftime( "%b %d %H:%M" ), font=fonte_rom, fill=255)
+                    # draw.text((0+rx, top+44+ry), datetime.now().strftime( "%b %d %H:%M" ), font=fonte_rom, fill=255)
                     draw.text((96+rx, top+54+ry), info , font=fonte_rom, fill=255)
                     draw.text((0+rx, top+54+ry), ipaddr, font=fonte_rom, fill=255)
-                disp.image(image)
-                disp.display()
+                oled.image(image)
+                oled.show()
                 sleep(3)
 
 if __name__ == "__main__":
