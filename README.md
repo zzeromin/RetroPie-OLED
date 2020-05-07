@@ -2,7 +2,6 @@
 Show Game Title on 128x64 OLED I2C Display for RetroPie v4.0.2+
 
 ![oled example00](RetroPie-OLED01.jpg)
-![oled example01](RetroPie-OLED02.jpg)
 
 
 ## About
