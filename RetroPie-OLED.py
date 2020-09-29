@@ -121,7 +121,7 @@ def main():
 
     while True:
         try:
-            f = open('/dev/shm/runcommand.log', 'r', -1,"utf-8")
+            f = open('/tmp/retropie_oled.log', 'r', -1,"utf-8")
             # except FileNotFoundError:
         except IOError:
             try:

@@ -121,7 +121,7 @@ def main():
 
     while True:
         try:
-            f = open('/dev/shm/runcommand.log', 'r')
+            f = open('/tmp/retropie_oled.log', 'r', -1,"utf-8")
             # except FileNotFoundError:
         except IOError:
             try:
@@ -229,7 +229,7 @@ def main():
                     gname_size = draw.textsize(line, font=font_rom)
                     draw.text(((width - gname_size[0])/2+rx, current_h+ry), line, font=font_rom, fill=255)
                     current_h += gname_size[1] + text_padding
-                if system == "TURN OFF":
+                #if system == "TURN OFF":
                     # draw.text((96+rx, top+54+ry), info , font=fonte_rom, fill=255)
                     # draw.text((0+rx, top+54+ry), ipaddr, font=fonte_rom, fill=255)
                 oled.image(image)
@@ -241,7 +241,7 @@ def main():
                 ry = randint(0, 2) - 1
                 draw.rectangle((0,0,width,height), outline=0, fill=0 )
                 image.paste(titleimg,(0+rx,0+ry))
-                if system == "TURN OFF":
+                #if system == "TURN OFF":
                     # draw.text((0+rx, top+44+ry), datetime.now().strftime( "%b %d %H:%M" ), font=fonte_rom, fill=255)
                     # draw.text((96+rx, top+54+ry), info , font=fonte_rom, fill=255)
                     # draw.text((0+rx, top+54+ry), ipaddr, font=fonte_rom, fill=255)
